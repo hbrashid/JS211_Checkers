@@ -93,6 +93,16 @@ class Board {
     return this.grid[row][column];
   }
 
+  killChecker(position) {
+    let checker = this.selectChecker(position[0], position[1]);
+    let indexChecker = this.checkers.indexOf(checker);
+      this.checkers.splice(indexChecker, 1);
+      this.grid[position[0]][position[1]] = null;
+
+
+
+  }
+
 }
 
 class Game {
@@ -104,8 +114,40 @@ class Game {
     this.board.createCheckers();
   }
 
+  // Here we are writing a method to move the checker. Start and end will take a row and column. Once it moves, that spot will be null.
   moveChecker(start, end) {
-    
+    const startRow = parseInt(start[0]);
+    const startCol = parseInt(start[1]);
+    const endRow = parseInt(end[0]);
+    const endCol = parseInt(end[1]);
+
+
+    let checker = this.board.selectChecker(start[0], start[1]);
+
+    this.board.grid[endRow][endCol] = checker;
+    this.board.grid[startRow][startCol] = null;
+
+
+// Need to declare killRow and killCol to be used in the conditional statement.
+    let killRow;
+    let killCol;
+
+    if (Math.abs(endRow - startRow) == 2) {
+      if (endRow > startRow) {
+        killRow = startRow + 1;
+      } else 
+        killRow = startRow - 1;
+      
+      if (endCol > startCol) {
+        killCol = startCol + 1;
+      } else 
+        killCol = startCol - 1;
+        
+        this.board.grid[killRow][killCol] = null;
+        this.board.checkers.pop();
+      }
+
+
   }
 }
 
