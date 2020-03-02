@@ -8,13 +8,24 @@ const rl = readline.createInterface({
 });
 
 
-function Checker() {
-  // Your code here
+class Checker {
+  constructor(color) {
+    // Your code here
+    if (color === "white") {
+      this.symbol = String.fromCharCode(0x125CB);
+    }
+    else {
+      this.symbol = String.fromCharCode(0x125CF);
+    }
+  }
 }
+
 
 class Board {
   constructor() {
     this.grid = []
+    this.checkers = []
+  
   }
   // method that creates an 8x8 array, filled with null values
   createGrid() {
@@ -53,6 +64,45 @@ class Board {
   }
 
   // Your code here
+  createCheckers() {
+    let whitePositions = [
+    [0, 1], [0, 3], [0, 5], [0, 7],
+    [1, 0], [1, 2], [1, 4], [1, 6],
+    [2, 1], [2, 3], [2, 5], [2, 7]
+    ]
+    let blackPositions = [
+    [5, 0], [5, 2], [5, 4], [5, 6],
+    [6, 1], [6, 3], [6, 5], [6, 7],
+    [7, 0], [7, 2], [7, 4], [7, 6]
+    ]
+    for (let i = 0; i < 12; i++) {
+      let whiteChecker = new Checker("white");
+      this.grid[whitePositions[i][0]][whitePositions[i][1]] = whiteChecker;
+      this.checkers.push(whiteChecker);
+    }
+    // We have checkers on the board! I had to change my function up top of 'Checkers' to a class. Then make a new instance of it here.
+
+    for (let i = 0; i < 12; i++) {
+      let blackChecker = new Checker("black");
+      this.grid[blackPositions[i][0]][blackPositions[i][1]] = blackChecker;
+      this.checkers.push(blackChecker);
+    }
+  }
+
+  selectChecker(row, column) {
+    return this.grid[row][column];
+  }
+
+  killChecker(position) {
+    let checker = this.selectChecker(position[0], position[1]);
+    let indexChecker = this.checkers.indexOf(checker);
+      this.checkers.splice(indexChecker, 1);
+      this.grid[position[0]][position[1]] = null;
+
+
+
+  }
+
 }
 
 class Game {
@@ -61,6 +111,43 @@ class Game {
   }
   start() {
     this.board.createGrid();
+    this.board.createCheckers();
+  }
+
+  // Here we are writing a method to move the checker. Start and end will take a row and column. Once it moves, that spot will be null.
+  moveChecker(start, end) {
+    const startRow = parseInt(start[0]);
+    const startCol = parseInt(start[1]);
+    const endRow = parseInt(end[0]);
+    const endCol = parseInt(end[1]);
+
+
+    let checker = this.board.selectChecker(start[0], start[1]);
+
+    this.board.grid[endRow][endCol] = checker;
+    this.board.grid[startRow][startCol] = null;
+
+
+// Need to declare killRow and killCol to be used in the conditional statement.
+    let killRow;
+    let killCol;
+
+    if (Math.abs(endRow - startRow) == 2) {
+      if (endRow > startRow) {
+        killRow = startRow + 1;
+      } else 
+        killRow = startRow - 1;
+      
+      if (endCol > startCol) {
+        killCol = startCol + 1;
+      } else 
+        killCol = startCol - 1;
+        
+        this.board.grid[killRow][killCol] = null;
+        this.board.checkers.pop();
+      }
+
+
   }
 }
 
